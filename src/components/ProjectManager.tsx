@@ -131,7 +131,6 @@ export default function ProjectManager() {
       <div className="flex items-center gap-1">
         <Button
           variant="secondary"
-          size="sm"
           onClick={handleSaveProject}
           title="Save Project"
         >
@@ -140,7 +139,6 @@ export default function ProjectManager() {
 
         <Button
           variant="secondary"
-          size="sm"
           onClick={() => setShowProjectList(!showProjectList)}
           title="Open Project"
         >
@@ -150,7 +148,6 @@ export default function ProjectManager() {
         <div className="relative">
           <Button
             variant="secondary"
-            size="sm"
             onClick={() => setShowExportOptions(!showExportOptions)}
             title="Export Project"
           >
@@ -193,7 +190,6 @@ export default function ProjectManager() {
 
         <Button
           variant="primary"
-          size="sm"
           onClick={handleNewProject}
           title="New Project"
         >

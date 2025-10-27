@@ -62,7 +62,7 @@ function snapRotation(angle: number): number {
 
 export default function Canvas() {
   const ref = useRef<HTMLDivElement>(null)
-  const { components, selectById, selectedId, selectedIds, selectedWireIds, selectedTextIds, selectedNodeIds, addComponentAt, tool, gridOn, setSelectedPosition, setSelectedScale, setSelectedRotation, beginWire, extendWire, finishWire, activeWire, wires, selectedWireId, selectWireById, addWireVertex, texts, selectedTextId, selectTextById, addTextAt, setSelectedTextPosition, setSelectedTextRotation, setSelectedPositionNoHistory, setSelectedTextPositionNoHistory, setSelectedRotationNoHistory, setSelectedTextRotationNoHistory, setSelectedScaleNoHistory, duplicateSelectedComponent, duplicateSelectedText, startPlacing, wireStyle, connectionNodes: storeConnectionNodes, addConnectionNode, deleteConnectionNode, moveConnectionNode, moveWireSegment, divideWireAtPoint, beforeAddComponent, loadTemplate, selectedNodeId, selectNodeById, deleteSelectedNode, toggleSelection, selectAllByType, clearSelection, copySelected, paste, saveHistory } = useAppStore()
+  const { components, selectById, selectedId, selectedIds, selectedWireIds, selectedTextIds, addComponentAt, tool, gridOn, setSelectedPosition, setSelectedScale, setSelectedRotation, beginWire, extendWire, finishWire, activeWire, wires, selectedWireId, selectWireById, addWireVertex, texts, selectedTextId, selectTextById, addTextAt, setSelectedTextPosition, setSelectedTextRotation, setSelectedPositionNoHistory, setSelectedTextPositionNoHistory, setSelectedRotationNoHistory, setSelectedTextRotationNoHistory, setSelectedScaleNoHistory, duplicateSelectedComponent, duplicateSelectedText, startPlacing, wireStyle, connectionNodes: storeConnectionNodes, addConnectionNode, deleteConnectionNode, moveConnectionNode, moveWireSegment, divideWireAtPoint, loadTemplate, selectedNodeId, deleteSelectedNode, toggleSelection, copySelected, paste } = useAppStore()
   const [dragging, setDragging] = useState(false)
   const [textDragging, setTextDragging] = useState(false)
   const [scale, setScale] = useState(1)
@@ -635,7 +635,7 @@ export default function Canvas() {
           const snappedResult = snapWirePoint(closestWirePoint.x, closestWirePoint.y, closestWirePoint.x, closestWirePoint.y)
           
           // Divide the wire at this segment - this creates the junction node
-          const junctionNodeId = divideWireAtPoint(clickedWire.id, segmentIndex, snappedResult.x, snappedResult.y)
+          divideWireAtPoint(clickedWire.id, segmentIndex, snappedResult.x, snappedResult.y)
           
           console.log(`Junction node created at (${snappedResult.x}, ${snappedResult.y})`)
         }

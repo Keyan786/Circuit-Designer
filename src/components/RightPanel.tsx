@@ -6,7 +6,7 @@ import { IconTrash, IconChip } from './icons'
 import SelectionTools from './SelectionTools'
 
 export default function RightPanel() {
-  const { components, selectedId, selectById, deleteSelected, setSelectedScale, setSelectedColor, setSelectedRotation, texts, selectedTextId, selectTextById, deleteSelectedText, setSelectedTextContent, setSelectedTextPosition, setSelectedTextRotation, setSelectedTextColor, setSelectedTextSize, setSelectedTextWeight, wires, selectedWireId, selectWireById, deleteSelectedWire, setWireLabel, setWireSignalType, setWireThickness, setWireLineStyle, selectedNodeId, selectNodeById, deleteSelectedNode, connectionNodes } = useAppStore()
+  const { components, selectedId, selectById, deleteSelected, setSelectedScale, setSelectedColor, setSelectedRotation, texts, selectedTextId, selectTextById, deleteSelectedText, setSelectedTextContent, setSelectedTextRotation, setSelectedTextColor, setSelectedTextSize, setSelectedTextWeight, wires, selectedWireId, selectWireById, deleteSelectedWire, setWireLabel, setWireSignalType, setWireThickness, setWireLineStyle, selectedNodeId, deleteSelectedNode, connectionNodes } = useAppStore()
   const selected = useMemo(() => components.find(c => c.id === selectedId) || null, [components, selectedId])
   const selectedText = useMemo(() => texts.find(t => t.id === selectedTextId) || null, [texts, selectedTextId])
   const selectedWire = useMemo(() => wires.find(w => w.id === selectedWireId) || null, [wires, selectedWireId])
