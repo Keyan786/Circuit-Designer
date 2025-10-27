@@ -4,6 +4,83 @@ import { produce } from 'immer'
 import type { ComponentType, PlacedComponent, ToolId, Wire, Point, WireStyle, TextElement, WireBundle } from './types'
 import { getConnectionNodes } from './utils/connectionPoints'
 
+// localStorage keys
+const STORAGE_KEYS = {
+  CIRCUIT_DATA: 'circuit-designer-data',
+  PROJECT_NAME: 'circuit-designer-project-name',
+  PROJECT_ID: 'circuit-designer-project-id',
+  SETTINGS: 'circuit-designer-settings'
+}
+
+// Save circuit data to localStorage
+const saveToStorage = (data: { components: PlacedComponent[]; wires: Wire[]; texts: TextElement[]; connectionNodes: any[] }) => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.CIRCUIT_DATA, JSON.stringify(data))
+    console.log('Circuit data saved to localStorage')
+  } catch (error) {
+    console.error('Failed to save to localStorage:', error)
+  }
+}
+
+// Load circuit data from localStorage
+const loadFromStorage = () => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.CIRCUIT_DATA)
+    if (data) {
+      const parsed = JSON.parse(data)
+      console.log('Circuit data loaded from localStorage')
+      return parsed
+    }
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error)
+  }
+  return null
+}
+
+// Save project info to localStorage
+const saveProjectInfo = (projectName: string, projectId: string) => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.PROJECT_NAME, projectName)
+    localStorage.setItem(STORAGE_KEYS.PROJECT_ID, projectId)
+  } catch (error) {
+    console.error('Failed to save project info:', error)
+  }
+}
+
+// Load project info from localStorage
+const loadProjectInfo = () => {
+  try {
+    const projectName = localStorage.getItem(STORAGE_KEYS.PROJECT_NAME) || 'Untitled Project'
+    const projectId = localStorage.getItem(STORAGE_KEYS.PROJECT_ID) || nanoid(8)
+    return { projectName, projectId }
+  } catch (error) {
+    console.error('Failed to load project info:', error)
+    return { projectName: 'Untitled Project', projectId: nanoid(8) }
+  }
+}
+
+// Save settings to localStorage
+const saveSettings = (settings: { gridOn: boolean; rulerOn: boolean; wireStyle: WireStyle; wireColor: string; textColor: string; textSize: number; textWeight: string }) => {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings))
+  } catch (error) {
+    console.error('Failed to save settings:', error)
+  }
+}
+
+// Load settings from localStorage
+const loadSettings = () => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.SETTINGS)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (error) {
+    console.error('Failed to load settings:', error)
+  }
+  return null
+}
+
 export interface CircuitTemplate {
   id: string;
   name: string;
@@ -49,6 +126,10 @@ export interface AppState {
   projectId: string;
   isProjectSaved: boolean;
   autoSave: boolean;
+  // Persistence functions
+  saveToLocalStorage: () => void;
+  loadFromLocalStorage: () => void;
+  clearLocalStorage: () => void;
   setTool: (tool: ToolId) => void;
   toggleGrid: () => void;
   toggleRuler: () => void;
@@ -242,10 +323,16 @@ function findAlignmentGuides(components: PlacedComponent[], currentId: string | 
   return guides
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>((set, get) => {
+  // Load initial data from localStorage
+  const loadedData = loadFromStorage()
+  const { projectName, projectId } = loadProjectInfo()
+  const loadedSettings = loadSettings()
+  
+  return {
   tool: 'select',
   placingType: null,
-  components: [],
+  components: loadedData?.components || [],
   selectedId: null,
   selectedWireId: null,
   selectedTextId: null,
@@ -255,24 +342,24 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectedTextIds: [],
   selectedNodeIds: [],
   clipboard: null,
-  texts: [],
-  wires: [],
+  texts: loadedData?.texts || [],
+  wires: loadedData?.wires || [],
   activeWire: null,
-  connectionNodes: [],
-  gridOn: true,
-  rulerOn: false,
-  wireStyle: 'elbow',
-  wireColor: '#334155',
-  textColor: '#000000',
-  textSize: 14,
-  textWeight: 'normal',
+  connectionNodes: loadedData?.connectionNodes || [],
+  gridOn: loadedSettings?.gridOn ?? true,
+  rulerOn: loadedSettings?.rulerOn ?? false,
+  wireStyle: loadedSettings?.wireStyle || 'elbow',
+  wireColor: loadedSettings?.wireColor || '#334155',
+  textColor: loadedSettings?.textColor || '#000000',
+  textSize: loadedSettings?.textSize || 14,
+  textWeight: loadedSettings?.textWeight || 'normal',
   history: [],
   future: [],
   templates: createBuiltInTemplates(),
   customTemplates: [],
   wireBundles: [],
-  projectName: 'Untitled Project',
-  projectId: nanoid(8),
+  projectName: projectName,
+  projectId: projectId,
   isProjectSaved: false,
   autoSave: true,
   setTool: (tool) => set({ tool }),
@@ -1738,7 +1825,77 @@ export const useAppStore = create<AppState>((set, get) => ({
       texts: state.texts 
     }].slice(-50), // Keep only last 50 states
     future: []
-  }))
-}))
+  })),
+
+  // Persistence functions
+  saveToLocalStorage: () => set((state) => {
+    const data = {
+      components: state.components,
+      wires: state.wires,
+      texts: state.texts,
+      connectionNodes: state.connectionNodes
+    }
+    saveToStorage(data)
+    saveProjectInfo(state.projectName, state.projectId)
+    saveSettings({
+      gridOn: state.gridOn,
+      rulerOn: state.rulerOn,
+      wireStyle: state.wireStyle,
+      wireColor: state.wireColor,
+      textColor: state.textColor,
+      textSize: state.textSize,
+      textWeight: state.textWeight
+    })
+    return { isProjectSaved: true }
+  }),
+
+  loadFromLocalStorage: () => set(() => {
+    const loadedData = loadFromStorage()
+    const { projectName, projectId } = loadProjectInfo()
+    const loadedSettings = loadSettings()
+    
+    if (loadedData) {
+      return {
+        components: loadedData.components || [],
+        wires: loadedData.wires || [],
+        texts: loadedData.texts || [],
+        connectionNodes: loadedData.connectionNodes || [],
+        projectName,
+        projectId,
+        isProjectSaved: true,
+        gridOn: loadedSettings?.gridOn ?? true,
+        rulerOn: loadedSettings?.rulerOn ?? false,
+        wireStyle: loadedSettings?.wireStyle || 'elbow',
+        wireColor: loadedSettings?.wireColor || '#334155',
+        textColor: loadedSettings?.textColor || '#000000',
+        textSize: loadedSettings?.textSize || 14,
+        textWeight: loadedSettings?.textWeight || 'normal'
+      }
+    }
+    return {}
+  }),
+
+  clearLocalStorage: () => set(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.CIRCUIT_DATA)
+      localStorage.removeItem(STORAGE_KEYS.PROJECT_NAME)
+      localStorage.removeItem(STORAGE_KEYS.PROJECT_ID)
+      localStorage.removeItem(STORAGE_KEYS.SETTINGS)
+      console.log('LocalStorage cleared')
+    } catch (error) {
+      console.error('Failed to clear localStorage:', error)
+    }
+    return {
+      components: [],
+      wires: [],
+      texts: [],
+      connectionNodes: [],
+      projectName: 'Untitled Project',
+      projectId: nanoid(8),
+      isProjectSaved: false
+    }
+  })
+  }
+})
 
 

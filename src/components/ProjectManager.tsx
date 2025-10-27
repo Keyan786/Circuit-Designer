@@ -22,7 +22,10 @@ export default function ProjectManager() {
     exportProject,
     exportProjectAsJSON,
     exportProjectAsSVG,
-    toggleAutoSave
+    toggleAutoSave,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+    clearLocalStorage
   } = useAppStore()
   
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([])
@@ -84,6 +87,23 @@ export default function ProjectManager() {
     setTempName(projectName)
   }
 
+  const handleSaveToLocalStorage = () => {
+    saveToLocalStorage()
+    alert('Project saved to browser storage!')
+  }
+
+  const handleLoadFromLocalStorage = () => {
+    loadFromLocalStorage()
+    alert('Project loaded from browser storage!')
+  }
+
+  const handleClearLocalStorage = () => {
+    if (confirm('Are you sure you want to clear all saved data? This cannot be undone.')) {
+      clearLocalStorage()
+      alert('All saved data cleared!')
+    }
+  }
+
   const handleNameSave = () => {
     setProjectName(tempName)
     setIsEditingName(false)
@@ -121,6 +141,7 @@ export default function ProjectManager() {
             onClick={handleNameEdit}
             className="text-white hover:text-blue-400 text-sm font-medium px-2 py-1 rounded hover:bg-slate-700 transition-colors"
           >
+            {autoSave && <span className="text-green-400 mr-1">✓</span>}
             {!isProjectSaved && !autoSave && <span className="text-blue-400 mr-1">•</span>}
             {projectName}
           </button>
@@ -143,6 +164,30 @@ export default function ProjectManager() {
           title="Open Project"
         >
           <IconFolderOpen width={16} height={16} />
+        </Button>
+
+        <Button
+          variant="secondary"
+          onClick={handleSaveToLocalStorage}
+          title="Save to Browser Storage"
+        >
+          💾
+        </Button>
+
+        <Button
+          variant="secondary"
+          onClick={handleLoadFromLocalStorage}
+          title="Load from Browser Storage"
+        >
+          📁
+        </Button>
+
+        <Button
+          variant="secondary"
+          onClick={handleClearLocalStorage}
+          title="Clear Browser Storage"
+        >
+          🗑️
         </Button>
 
         <div className="relative">
