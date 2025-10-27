@@ -72,19 +72,19 @@ export const IconChevronDown = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
-export const IconSelect = (props: React.SVGProps<SVGSVGElement>) => (
+export const IconSelect = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src={mousePointerClickSvg} alt="Select" className="w-5 h-5 brightness-0 invert" style={{ filter: 'brightness(0) invert(1)' }} {...props} />
 )
 
-export const IconWire = (props: React.SVGProps<SVGSVGElement>) => (
+export const IconWire = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src={slashSvg} alt="Wire" className="w-5 h-5 brightness-0 invert" style={{ filter: 'brightness(0) invert(1)' }} {...props} />
 )
 
-export const IconText = (props: React.SVGProps<SVGSVGElement>) => (
+export const IconText = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src={textSvg} alt="Text" className="w-5 h-5 brightness-0 invert" style={{ filter: 'brightness(0) invert(1)' }} {...props} />
 )
 
-export const IconNode = (props: React.SVGProps<SVGSVGElement>) => (
+export const IconNode = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src={transformSvg} alt="Node" className="w-5 h-5 brightness-0 invert" style={{ filter: 'brightness(0) invert(1)' }} {...props} />
 )
 

@@ -1,8 +1,7 @@
 import React from 'react'
-import type { ComponentType, PlacedComponent } from '../types'
+import type { ComponentType } from '../types'
 
 const common = 'fill-none stroke-current stroke-[1.5]'
-const thick = 'fill-none stroke-current stroke-[2]'
 
 function Resistor() {
   // IEEE 315-1975 standard resistor - zigzag pattern

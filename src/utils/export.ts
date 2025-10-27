@@ -16,7 +16,6 @@ function resolvePoint(p: Point, components: PlacedComponent[], connectionNodes: 
 // Generate actual component symbols matching the canvas - IEEE 315-1975 compliant
 function generateComponentSymbol(type: ComponentType): string {
   const common = 'fill="none" stroke="currentColor" stroke-width="1.5"'
-  const thick = 'fill="none" stroke="currentColor" stroke-width="2"'
   
   switch (type) {
     case 'Resistor':
@@ -1063,7 +1062,7 @@ export function generateSVG(components: PlacedComponent[], wires: Wire[], option
     connectionNodes.push(...componentNodes)
   })
 
-  let minX, minY, maxX, maxY
+  let minX: number, minY: number, maxX: number, maxY: number
 
   if (customBounds) {
     // Use provided bounds (for PNG export)
@@ -1194,7 +1193,7 @@ export function exportAsPNG(components: PlacedComponent[], wires: Wire[], filena
   const { scale = 4, showGrid = false, showNodes = true, padding = 20 } = options
   
   // Calculate exact circuit bounds - pixel by pixel
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  let minX: number = Infinity, minY: number = Infinity, maxX: number = -Infinity, maxY: number = -Infinity
   
   // Get connection nodes for wire resolution
   const connectionNodes: any[] = []
